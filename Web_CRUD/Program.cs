@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Web_CRUD.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +19,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseDefaultFiles();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

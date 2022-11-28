@@ -1,92 +1,149 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Web_CRUD.Models;
 
 namespace Web_CRUD.Controllers
 {
     public class EmployeController : Controller
     {
+        private EmployessContext _db = new EmployessContext();
 
-        public IActionResult Create()
+        public IActionResult Index()
+        {
+            return View(_db.Employes.ToList());
+        }
+
+        public ActionResult Create()
         {
             return View();
-        }
-        [HttpPost]
-        public ActionResult Create(Employe model)
-        {
-            using (var context = new EmployessContext())
-            {
-                context.Employes.Add(model);
-                context.SaveChanges();
-            }
-            string message = "Created the record successfully";
-
-            ViewBag.Message = message;
-            return View();
-        }
-
-        public ActionResult List()
-        {
-            using (var context = new EmployessContext())
-            {
-                var data = context.Employes.ToList();
-                return View(data);
-            }
-        }
-        public ActionResult Update(int Id)
-        {
-            using (var context = new EmployessContext())
-            {
-                var data = context.Employes.Where(x => x.Id == Id).SingleOrDefault();
-                return View(data);
-            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Update(int Id, Employe model)
+        public ActionResult Create(Employe employe)
         {
-            using (var context = new EmployessContext())
+            if (ModelState.IsValid)
             {
-                var data = context.Employes.FirstOrDefault(x => x.Id == Id);
-
-                if (data != null)
+                var check = _db.Employes.FirstOrDefault(s => s.Id == employe.Id);
+                if (check == null)
                 {
-                    data.Id = model.Id;
-                    data.Password = model.Password;
-                    data.BirthDay = model.BirthDay;
-                    data.Adress = model.Adress;
-                    data.Email = model.Email;
-                    data.Age = model.Age;
-                    data.Gender = model.Gender;
-                    context.SaveChanges();
-                    return RedirectToAction("List");
+                    //_user.Password = GetMD5(_user.Password);
+                    //_db.configuration.validateonsaveenabled = false;
+                    _db.Employes.Add(employe);
+                    _db.SaveChanges();
+                    return RedirectToAction("Index");
                 }
                 else
+                {
+                    ViewBag.error = "ID exits";
                     return View();
+                }
+
+
             }
-        }
-        public ActionResult Delete()
-        {
-            return View("List");
+            return View();
         }
 
-        [HttpPost]
+        public async Task<IActionResult> List(int? id)
+        {
+            if (id == null || _db.Employes == null)
+            {
+                return NotFound();
+            }
+
+            var em = await _db.Employes
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (em == null)
+            {
+                return NotFound();
+            }
+
+            return View(em);
+        }
+
+
+        public async Task<IActionResult> Update(int? id)
+        {
+            if (id == null || _db.Employes == null)
+            {
+                return NotFound();
+            }
+
+            var em = await _db.Employes.FindAsync(id)
+;
+            if (em == null)
+            {
+                return NotFound();
+            }
+            return View(em);
+        }
+        public async Task<IActionResult> Edit(int id, Employe em)
+        {
+            if (id != em.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _db.Update(em);
+                    await _db.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!EmployesExists(em.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(em);
+        }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null || _db.Employes == null)
+            {
+                return NotFound();
+            }
+
+            var em = await _db.Employes
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (em == null)
+            {
+                return NotFound();
+            }
+
+            return View(em);
+        }
+
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult
-        Delete(int Id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            using (var context = new EmployessContext())
+            if (_db.Employes == null)
             {
-                var data = context.Employes.FirstOrDefault(x => x.Id == Id);
-                if (data != null)
-                {
-                    context.Employes.Remove(data);
-                    context.SaveChanges();
-                    return RedirectToAction("List");
-                }
-                else
-                    return View();
+                return Problem("Entity set 'DataUserContext.Usertbls'  is null.");
             }
+            var user = await _db.Employes.FindAsync(id)
+;
+            if (user != null)
+            {
+                _db.Employes.Remove(user);
+            }
+
+            await _db.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        private bool EmployesExists(int id)
+        {
+            return _db.Employes.Any(e => e.Id == id);
         }
     }
 }

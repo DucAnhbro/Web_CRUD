@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Web_CRUD.Models.Employe>
+@{
+    ViewBag.Title = "Employe";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>List</h1>
+
+<div>
+    <h4>Employe</h4>
+    <hr />
+    <dl class="row">
+       <table class="table table-striped table-hover">
+           <thead>
+            <tr>
+                <th scope="col">#id</th>
+                <th scope="col">Password</th>
+                <th scope="col">BirthDay</th>
+                <th scope="col">Adress</th>
+                <th scope="col">Email</th>
+                <th scope="col">Age</th>
+                <th scope="col">Gender </th>
+                <th scope="col">Action </th>
+            </tr>
+        </thead>
+        <tbody>
+
+                @{
+                    foreach (var employe in Model)
+                    {
+                            <tr>
+                                <th>@employe.Id</th>
+                                <td>@employe.Email</td>
+                                <td>@employe.BirthDay</td>
+                                <td>@employe.Adress</td>
+                                <td>@employe.Email</td>
+                                <td>@employe.Age</td>
+                                <td>@employe.Gender</td>
+                                <td><a href="Create">Create</a></td>
+                                <td><a href="Update?@employe.Id">Update</a></td>
+                                <td><a href="Delete?@employe.Id">Delete</a></td>
+                            </tr>
+                    }
+                }
+                </tbody>
+       </table>
+       
+    </dl>
+</div>

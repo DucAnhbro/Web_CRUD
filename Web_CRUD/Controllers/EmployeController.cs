@@ -77,9 +77,12 @@ namespace Web_CRUD.Controllers
             }
             return View(em);
         }
-        public async Task<IActionResult> Edit(int id, Employe em)
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update(int id, Employe employe)
         {
-            if (id != em.Id)
+            if (id != employe.Id)
             {
                 return NotFound();
             }
@@ -88,12 +91,12 @@ namespace Web_CRUD.Controllers
             {
                 try
                 {
-                    _db.Update(em);
+                    _db.Update(employe);
                     await _db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployesExists(em.Id))
+                    if (!EmployesExists(employe.Id))
                     {
                         return NotFound();
                     }
@@ -104,7 +107,7 @@ namespace Web_CRUD.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(em);
+            return View(employe);
         }
         public async Task<IActionResult> Delete(int? id)
         {

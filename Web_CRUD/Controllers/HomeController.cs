@@ -2,6 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using Web_CRUD.Models;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using Web_CRUD.Constants;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Web_CRUD.Controllers
 {
@@ -16,6 +22,8 @@ namespace Web_CRUD.Controllers
 
         public IActionResult Index()
         {
+            string s = HttpContext.Session.GetString(Session.ID);
+            ViewBag.name = s;
             return View(_db.Employes.ToList());
         }
 
@@ -23,7 +31,56 @@ namespace Web_CRUD.Controllers
         {
             return View();
         }
+        public IActionResult Login()
+        {
+            return View();
+        }
 
+
+        [HttpPost, ActionName("Login")]
+        public async Task<IActionResult> Login(string email, string password)
+        {
+            {
+                var p = _db.Employes.ToList();
+                var userDetail = _db.Employes.SingleOrDefault(x => x.Email == email && x.Password == password);
+
+                if (userDetail == null)
+                {
+                    return RedirectToAction("Login", "Home");
+                }
+                else
+                {
+                    HttpContext.Session.SetString(Session.ID, email);
+
+                    return RedirectToAction("Index", "Employe");
+                }
+
+            }
+        }
+
+        public ActionResult Logout()
+        {
+            HttpContext.Session.Remove("Id");
+            return RedirectToAction("Login", "Home");
+        }
+
+        public static string GetMD5(string str)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] fromData = Encoding.UTF8.GetBytes(str);
+            byte[] targetData = md5.ComputeHash(fromData);
+            string byte2String = null;
+
+            for (int i = 0; i < targetData.Length; i++)
+            {
+                byte2String += targetData[i].ToString("x2");
+
+            }
+            return byte2String;
+        }
+        
+        //ma hoa cuoi password
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Employe employe)
@@ -83,9 +140,9 @@ namespace Web_CRUD.Controllers
             }
             return View(em);
         }
-        public async Task<IActionResult> Edit(int id, Employe em)
+        public async Task<IActionResult> Update(int id, [Bind("Id,Password,BirthDay,Adress,Email,Age,Gender")] Employe employe)
         {
-            if (id != em.Id)
+            if (id != employe.Id)
             {
                 return NotFound();
             }
@@ -94,12 +151,12 @@ namespace Web_CRUD.Controllers
             {
                 try
                 {
-                    _db.Update(em);
+                    _db.Update(employe);
                     await _db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployesExists(em.Id))
+                    if (!EmployesExists(employe.Id))
                     {
                         return NotFound();
                     }
@@ -110,7 +167,7 @@ namespace Web_CRUD.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(em);
+            return View(employe);
         }
         public async Task<IActionResult> Delete(int? id)
         {

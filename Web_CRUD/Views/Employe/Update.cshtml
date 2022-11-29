@@ -39,9 +39,11 @@
                 <span asp-validation-for="Age" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Gender" /> @Html.DisplayNameFor(model => model.Gender)
-                </label>
+                <select id="gender" onchange="genderChanged(this)">
+                    <option value=""> -- Chọn -- </option>
+                    <option value="nam">Nam</option>
+                    <option value="nu"> Nữ </option>
+                </select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -53,6 +55,23 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script>
+    function genderChanged(obj)
+{
+    var message = document.getElementById('show_message');
+    var value = obj.value;
+    if (value === ''){
+        message.innerHTML = "Bạn chưa chọn giới tính";
+    }
+    else if (value === 'nam'){
+        message.innerHTML = "Bạn đã chọn giới tính nam";
+    }
+    else if (value === 'nu'){
+        message.innerHTML = "Bạn đã chọn giới tính nữ";
+    }
+}
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

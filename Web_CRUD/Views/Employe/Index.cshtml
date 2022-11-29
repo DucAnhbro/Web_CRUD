@@ -4,65 +4,44 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Index">Index</a>
-</p>
+<h1>Show Employe</h1>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BirthDay)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Adress)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Age)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Gender)
-            </th>
-            <th></th>
+            <th> ID </th>
+            <th>Password</th>
+            <th>BirthDay</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th> Action</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Password</td>
+                    <td>@item.BirthDay</td>
+                    <td>@item.Email.ToLower()</td>
+                    <td>@item.Age</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
+                    @{
+                        var gender = "";
+                        if (item.Gender)
+                        {
+                            gender = "Nam";
+                        }
+                        else
+                        {
+                            gender = "Nu";
+                        }
+                    }
+                    @gender
+                </td>   
                 <td>
-                   @* @Html.DisplayFor(modelItem => item.Password)*@
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BirthDay)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Adress)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Age)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Gender)
-                </td>
-                <td>
-                        <a asp-action="Create" asp-route-id="@item.Id">Create</a> |
+                    <a asp-action="Create">Create</a> |
                     <a asp-action="Update" asp-route-id="@item.Id">Update</a> |
                     <a asp-action="List" asp-route-id="@item.Id">List</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
@@ -71,3 +50,6 @@
         }
     </tbody>
 </table>
+<div class="text-center">
+    <button class="btn btn-danger"><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Logout">Logout</a></button>
+</div>

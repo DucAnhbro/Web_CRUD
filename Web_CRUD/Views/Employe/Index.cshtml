@@ -5,11 +5,12 @@
 }
 
 <h1>Show Employe</h1>
+<button class="btn btn-danger"><a asp-action="Create">Create</a></button>
 <table class="table">
     <thead>
         <tr>
             <th> ID </th>
-            <th>Password</th>
+            <th >Password</th>
             <th>BirthDay</th>
             <th>Email</th>
             <th>Age</th>
@@ -41,10 +42,11 @@
                     @gender
                 </td>   
                 <td>
-                    <a asp-action="Create">Create</a> |
-                    <a asp-action="Update" asp-route-id="@item.Id">Update</a> |
-                    <a asp-action="List" asp-route-id="@item.Id">List</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+
+                        
+                        <a asp-action="Update" asp-route-id="@item.Id">Update</a> |
+                        <a asp-action="List" asp-route-id="@item.Id">List</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
             </tr>
         }

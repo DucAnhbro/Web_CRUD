@@ -78,8 +78,7 @@ namespace Web_CRUD.Controllers
             }
             return byte2String;
         }
-        
-        //ma hoa cuoi password
+              
        
         [HttpPost]
         [ValidateAntiForgeryToken]
